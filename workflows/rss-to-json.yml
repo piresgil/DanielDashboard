@@ -1,0 +1,57 @@
+name: Atualizar news.json automaticamente
+
+on:
+  schedule:
+    - cron: "0 8 * * *"   # todos os dias às 08:00
+  workflow_dispatch:       # permite correr manualmente
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Instalar feedparser
+        run: pip install feedparser
+
+      - name: Gerar news.json
+        run: |
+          python3 << 'EOF'
+          import feedparser, json
+
+          fontes = {
+              "futebol": [
+                  ("https://www.abola.pt/rss", "A Bola"),
+                  ("https://www.record.pt/rss", "Record")
+              ],
+              "hoquei": [
+                  ("https://www.zerozero.pt/rss", "ZeroZero"),
+                  ("https://hoqueipt.com/rss", "HóqueiPT")
+              ]
+          }
+
+          resultado = {"futebol": [], "hoquei": []}
+
+          for categoria, feeds in fontes.items():
+              for url, fonte in feeds:
+                  feed = feedparser.parse(url)
+                  for item in feed.entries[:5]:  # 5 notícias por fonte
+                      resultado[categoria].append({
+                          "titulo": item.title,
+                          "link": item.link,
+                          "fonte": fonte
+                      })
+
+          with open("news.json", "w", encoding="utf-8") as f:
+              json.dump(resultado, f, ensure_ascii=False, indent=2)
+          EOF
+
+      - name: Commit e push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add news.json
+          git commit -m "Atualização automática do news.json" || echo "Nada para atualizar"
+          git push
