@@ -3,61 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <title>DanielDashboard</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
       margin: 0;
+      padding: 0;
+      background: #0d0d0d;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 25px 0;
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      background: #111;
+      border-bottom: 2px solid #222;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: #222;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: bold;
+    }
+
+    .tab:hover {
+      background: #333;
+    }
+
+    .tab.active {
+      background: #e60000;
+    }
+
+    /* Cards */
+    .container {
+      max-width: 900px;
+      margin: auto;
       padding: 20px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
+
+    .card {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px #000;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .categoria {
-      margin-top: 40px;
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 15px #e60000;
     }
-    .noticia {
-      background: #222;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 8px;
+
+    .fonte {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 8px;
     }
+
     a {
       color: #4da3ff;
       text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
+
 <body>
 
-<h1>DanielDashboard</h1>
+<header>DanielDashboard</header>
 
-<div id="conteudo">A carregar notícias...</div>
+<div class="tabs">
+  <div class="tab active" onclick="mostrar('benfica')">Benfica</div>
+  <div class="tab" onclick="mostrar('hoquei')">Hóquei</div>
+  <div class="tab" onclick="mostrar('tecnologia')">Tecnologia</div>
+</div>
+
+<div class="container" id="conteudo">A carregar notícias...</div>
 
 <script>
+  let dados = {};
+
+  function mostrar(secao) {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelector(`.tab[onclick="mostrar('${secao}')"]`).classList.add("active");
+
+    const lista = dados[secao] || [];
+    let html = "";
+
+    lista.forEach(n => {
+      html += `
+        <div class="card">
+          <div class="fonte">${n.fonte}</div>
+          <div class="titulo"><strong>${n.titulo}</strong></div>
+          <div class="resumo">${n.resumo || ""}</div>
+          <br>
+          <a href="${n.link}" target="_blank">Ler notícia</a>
+        </div>
+      `;
+    });
+
+    document.getElementById("conteudo").innerHTML = html || "Sem notícias disponíveis.";
+  }
+
   fetch("news.json")
     .then(r => r.json())
-    .then(data => {
-      let html = "";
-
-      for (const categoria in data) {
-        html += `<div class='categoria'><h2>${categoria.toUpperCase()}</h2>`;
-        data[categoria].forEach(n => {
-          html += `
-            <div class='noticia'>
-              <strong>${n.titulo}</strong><br>
-              <a href="${n.link}" target="_blank">${n.fonte}</a>
-            </div>
-          `;
-        });
-        html += "</div>";
-      }
-
-      document.getElementById("conteudo").innerHTML = html;
+    .then(json => {
+      dados = json;
+      mostrar("benfica");
     })
-    .catch(err => {
+    .catch(() => {
       document.getElementById("conteudo").innerHTML = "Erro ao carregar notícias.";
     });
 </script>

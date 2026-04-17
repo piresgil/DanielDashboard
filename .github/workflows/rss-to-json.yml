@@ -2,8 +2,8 @@ name: Atualizar news.json automaticamente
 
 on:
   schedule:
-    - cron: "0 8 * * *"   # todos os dias às 08:00
-  workflow_dispatch:       # permite correr manualmente
+    - cron: "0 */6 * * *"   # Atualiza de 6 em 6 horas
+  workflow_dispatch:
 
 jobs:
   build:
@@ -11,41 +11,111 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Instalar feedparser
-        run: pip install feedparser
+      - name: Instalar dependências Python
+        run: |
+          pip install feedparser googletrans==4.0.0-rc1 beautifulsoup4 requests
 
       - name: Gerar news.json
         run: |
           python3 << 'EOF'
-          import feedparser, json
+          import feedparser, json, requests
+          from bs4 import BeautifulSoup
+          from googletrans import Translator
 
+          translator = Translator()
+
+          # -----------------------------
+          # FILTROS DO BENFICA
+          # -----------------------------
+          palavras_benfica = ["Benfica", "SLB", "Águias", "Encarnados"]
+
+          def resumo(texto):
+              return texto[:180] + "..."
+
+          def traduzir(txt):
+              try:
+                  return translator.translate(txt, dest="pt").text
+              except:
+                  return txt
+
+          # -----------------------------
+          # FONTES
+          # -----------------------------
           fontes = {
-              "futebol": [
+              "benfica": [
                   ("https://www.abola.pt/rss", "A Bola"),
-                  ("https://www.record.pt/rss", "Record")
+                  ("https://www.record.pt/rss", "Record"),
+                  ("https://www.ojogo.pt/rss", "O Jogo"),
+                  ("https://www.zerozero.pt/rss", "ZeroZero"),
+                  ("https://maisfutebol.iol.pt/rss", "MaisFutebol")
               ],
               "hoquei": [
                   ("https://www.zerozero.pt/rss", "ZeroZero"),
                   ("https://hoqueipt.com/rss", "HóqueiPT")
+              ],
+              "tecnologia": [
+                  ("https://blog.espressif.com/feed", "Espressif"),
+                  ("https://blog.arduino.cc/feed", "Arduino"),
+                  ("https://www.baeldung.com/feed", "Baeldung"),
+                  ("https://www.infoq.com/java/feed", "InfoQ Java"),
+                  ("https://hnrss.org/frontpage", "HackerNews")
               ]
           }
 
-          resultado = {"futebol": [], "hoquei": []}
+          resultado = {"benfica": [], "hoquei": [], "tecnologia": []}
 
+          # -----------------------------
+          # RSS NORMAL
+          # -----------------------------
           for categoria, feeds in fontes.items():
               for url, fonte in feeds:
                   feed = feedparser.parse(url)
-                  for item in feed.entries[:5]:  # 5 notícias por fonte
-                      resultado[categoria].append({
-                          "titulo": item.title,
-                          "link": item.link,
-                          "fonte": fonte
-                      })
+                  for item in feed.entries[:10]:
+                      titulo = item.title
+                      link = item.link
 
+                      # FILTRO BENFICA
+                      if categoria == "benfica":
+                          if not any(p.lower() in titulo.lower() for p in palavras_benfica):
+                              continue
+
+                      noticia = {
+                          "titulo": traduzir(titulo),
+                          "resumo": resumo(traduzir(item.get("summary", titulo))),
+                          "link": link,
+                          "fonte": fonte
+                      }
+                      resultado[categoria].append(noticia)
+
+          # -----------------------------
+          # SCRAPING DO SITE OFICIAL DO BENFICA
+          # -----------------------------
+          try:
+              html = requests.get("https://www.slbenfica.pt/pt-pt/agora/noticias").text
+              soup = BeautifulSoup(html, "html.parser")
+              artigos = soup.select("a.card-news")
+
+              for a in artigos[:10]:
+                  titulo = a.get_text(strip=True)
+                  link = "https://www.slbenfica.pt" + a["href"]
+
+                  resultado["benfica"].append({
+                      "titulo": titulo,
+                      "resumo": "Notícia oficial do Benfica.",
+                      "link": link,
+                      "fonte": "SL Benfica"
+                  })
+          except:
+              pass
+
+          # -----------------------------
+          # GUARDAR JSON
+          # -----------------------------
           with open("news.json", "w", encoding="utf-8") as f:
               json.dump(resultado, f, ensure_ascii=False, indent=2)
+
           EOF
 
       - name: Commit e push
@@ -53,5 +123,4 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add news.json
-          git commit -m "Atualização automática do news.json" || echo "Nada para atualizar"
-          git push
+          git diff --quiet && echo "Sem alterações" || (git commit -am "Atualização automática do news.json" && git push)
