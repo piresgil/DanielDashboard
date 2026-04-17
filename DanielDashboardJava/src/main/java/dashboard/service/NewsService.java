@@ -13,7 +13,8 @@ import java.util.List;
 
 public class NewsService {
 
-    private static final String URL = "https://github.com/piresgil/DanielDashboard/news.json";
+    private static final String URL = "https://piresgil.github.io/DanielDashboard/news.json";
+
 
 
     public JsonObject fetchJson() throws Exception {

@@ -1,0 +1,4 @@
+dashboard\service\NewsService.class
+dashboard\model\Noticia.class
+dashboard\controller\MainController.class
+dashboard\App.class
