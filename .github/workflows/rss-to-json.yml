@@ -17,29 +17,58 @@ jobs:
         run: |
           pip install feedparser requests
 
-      - name: Gerar news.json
+           - name: Gerar news.json
         run: |
           python3 << 'EOF'
           import feedparser, json
+          from datetime import datetime
+
+          def gerar_resumo(item):
+              resumo = getattr(item, "summary", "").strip()
+              if resumo:
+                  return resumo[:200] + "..."
+              return item.title[:200] + "..."
+
+          def extrair_data(item):
+              if hasattr(item, "published"):
+                  return item.published
+              if hasattr(item, "updated"):
+                  return item.updated
+              return "Sem data"
+
+          def extrair_imagem(item):
+              # 1) media:thumbnail
+              if "media_thumbnail" in item:
+                  return item.media_thumbnail[0].get("url", "")
+
+              # 2) media:content
+              if "media_content" in item:
+                  return item.media_content[0].get("url", "")
+
+              # 3) enclosure
+              if hasattr(item, "links"):
+                  for link in item.links:
+                      if link.get("rel") == "enclosure" and "image" in link.get("type", ""):
+                          return link.get("href", "")
+
+              return ""  # sem imagem
 
           fontes = {
               "futebol": [
                   ("https://www.abola.pt/rss", "A Bola"),
                   ("https://www.record.pt/rss", "Record"),
                   ("https://www.ojogo.pt/rss", "O Jogo"),
-                  ("https://www.zerozero.pt/rss", "ZeroZero"),
                   ("https://maisfutebol.iol.pt/rss", "MaisFutebol")
               ],
               "hoquei": [
-                  ("https://www.zerozero.pt/rss", "ZeroZero"),
                   ("https://hoqueipt.com/rss", "HóqueiPT")
               ],
               "tecnologia": [
-                  ("https://blog.espressif.com/feed", "Espressif"),
-                  ("https://blog.arduino.cc/feed", "Arduino"),
                   ("https://www.baeldung.com/feed", "Baeldung"),
                   ("https://www.infoq.com/java/feed", "InfoQ Java"),
-                  ("https://hnrss.org/frontpage", "HackerNews")
+                  ("https://hnrss.org/frontpage", "HackerNews"),
+                  ("https://www.electronics-lab.com/feed/", "ElectronicsLab"),
+                  ("https://blog.arduino.cc/feed", "Arduino")
               ]
           }
 
@@ -47,18 +76,31 @@ jobs:
 
           for categoria, feeds in fontes.items():
               for url, fonte in feeds:
-                  feed = feedparser.parse(url)
-                  for item in feed.entries[:10]:
-                      resultado[categoria].append({
-                          "titulo": item.title,
-                          "link": item.link,
-                          "fonte": fonte
-                      })
+                  try:
+                      feed = feedparser.parse(url)
+                      for item in feed.entries[:10]:
+                          titulo = getattr(item, "title", "").strip()
+                          link = getattr(item, "link", "").strip()
+
+                          if not titulo or not link:
+                              continue
+
+                          resultado[categoria].append({
+                              "titulo": titulo,
+                              "resumo": gerar_resumo(item),
+                              "link": link,
+                              "fonte": fonte,
+                              "data": extrair_data(item),
+                              "imagem": extrair_imagem(item)
+                          })
+                  except Exception as e:
+                      print("Erro no feed:", url, e)
 
           with open("news.json", "w", encoding="utf-8") as f:
               json.dump(resultado, f, ensure_ascii=False, indent=2)
 
           EOF
+
 
       - name: Commit e push
         run: |

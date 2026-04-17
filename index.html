@@ -1,181 +1,186 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
-  <meta charset="UTF-8">
-  <title>DanielDashboard</title>
+    <meta charset="UTF-8">
+    <title>DanielDashboard</title>
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #0d0d0d;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0d0d0d;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
 
-    header {
-      text-align: center;
-      padding: 25px 0;
-      font-size: 32px;
-      font-weight: bold;
-      background: #111;
-      border-bottom: 2px solid #222;
-    }
+        header {
+            text-align: center;
+            padding: 25px 0;
+            font-size: 32px;
+            font-weight: bold;
+            background: #111;
+            border-bottom: 2px solid #222;
+        }
 
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin: 20px 0;
-    }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
 
-    .tab {
-      padding: 10px 20px;
-      background: #222;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-      font-weight: bold;
-    }
+        .tab {
+            padding: 10px 20px;
+            background: #222;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
 
-    .tab:hover {
-      background: #333;
-    }
+        .tab:hover {
+            background: #333;
+        }
 
-    .tab.active {
-      background: #e60000;
-    }
+        .tab.active {
+            background: #e60000;
+        }
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
 
-    .card {
-      background: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 10px #000;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+        .card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px #000;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 0 15px #e60000;
-    }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 15px #e60000;
+        }
 
-    .fonte {
-      color: #aaa;
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
+        .fonte {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
 
-    a {
-      color: #4da3ff;
-      text-decoration: none;
-      font-weight: bold;
-    }
+        a {
+            color: #4da3ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-    a:hover {
-      text-decoration: underline;
-    }
+        a:hover {
+            text-decoration: underline;
+        }
 
-    .filtro {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+        .filtro {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    .btn {
-      padding: 10px 20px;
-      background: #333;
-      border-radius: 8px;
-      cursor: pointer;
-      display: inline-block;
-      margin: 5px;
-    }
+        .btn {
+            padding: 10px 20px;
+            background: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 5px;
+        }
 
-    .btn:hover {
-      background: #444;
-    }
+        .btn:hover {
+            background: #444;
+        }
 
-    .btn.active {
-      background: #e60000;
-    }
-  </style>
+        .btn.active {
+            background: #e60000;
+        }
+    </style>
 </head>
 
 <body>
 
-<header>DanielDashboard</header>
+    <header>DanielDashboard</header>
 
-<div class="tabs">
-  <div class="tab active" onclick="mostrar('futebol')">Futebol</div>
-  <div class="tab" onclick="mostrar('hoquei')">Hóquei</div>
-  <div class="tab" onclick="mostrar('tecnologia')">Tecnologia</div>
-</div>
+    <div class="tabs">
+        <div class="tab active" onclick="mostrar('futebol')">Futebol</div>
+        <div class="tab" onclick="mostrar('hoquei')">Hóquei</div>
+        <div class="tab" onclick="mostrar('tecnologia')">Tecnologia</div>
+    </div>
 
-<div class="filtro" id="filtroBenfica" style="display:none;">
-  <div class="btn active" onclick="filtrarBenfica(false)">Tudo</div>
-  <div class="btn" onclick="filtrarBenfica(true)">Só Benfica</div>
-</div>
+    <div class="filtro" id="filtroBenfica" style="display:none;">
+        <div class="btn active" onclick="filtrarBenfica(false)">Tudo</div>
+        <div class="btn" onclick="filtrarBenfica(true)">Só Benfica</div>
+    </div>
 
-<div class="container" id="conteudo">A carregar notícias...</div>
+    <div class="container" id="conteudo">A carregar notícias...</div>
 
-<script>
-  let dados = {};
-  let filtroBenficaAtivo = false;
+    <script>
+        let dados = {};
+        let filtroBenficaAtivo = false;
 
-  const palavrasBenfica = ["benfica", "slb", "águia", "encarnad"];
+        const palavrasBenfica = ["benfica", "slb", "águia", "encarnad"];
 
-  function filtrarBenfica(ativo) {
-    filtroBenficaAtivo = ativo;
-    document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
-    document.querySelector(`.btn[onclick="filtrarBenfica(${ativo})"]`).classList.add("active");
-    mostrar("futebol");
-  }
+        function filtrarBenfica(ativo) {
+            filtroBenficaAtivo = ativo;
+            document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
+            document.querySelector(`.btn[onclick="filtrarBenfica(${ativo})"]`).classList.add("active");
+            mostrar("futebol");
+        }
 
-  function mostrar(secao) {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    document.querySelector(`.tab[onclick="mostrar('${secao}')"]`).classList.add("active");
+        function mostrar(secao) {
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            document.querySelector(`.tab[onclick="mostrar('${secao}')"]`).classList.add("active");
 
-    document.getElementById("filtroBenfica").style.display = secao === "futebol" ? "block" : "none";
+            document.getElementById("filtroBenfica").style.display = secao === "futebol" ? "block" : "none";
 
-    let lista = dados[secao] || [];
+            let lista = dados[secao] || [];
 
-    if (secao === "futebol" && filtroBenficaAtivo) {
-      lista = lista.filter(n =>
-        palavrasBenfica.some(p => n.titulo.toLowerCase().includes(p))
-      );
-    }
+            if (secao === "futebol" && filtroBenficaAtivo) {
+                lista = lista.filter(n =>
+                    palavrasBenfica.some(p => n.titulo.toLowerCase().includes(p))
+                );
+            }
 
-    let html = "";
+            let html = "";
 
-    lista.forEach(n => {
-      html += `
-        <div class="card">
-          <div class="fonte">${n.fonte}</div>
-          <div><strong>${n.titulo}</strong></div>
-          <br>
-          <a href="${n.link}" target="_blank">Ler notícia</a>
-        </div>
-      `;
-    });
+            lista.forEach(n => {
+                html += `
+                    <div class="card">
+                     <div class="fonte">${n.fonte} — <span style="color:#888;">${n.data}</span></div>
 
-    document.getElementById("conteudo").innerHTML = html || "Sem notícias disponíveis.";
-  }
+                     ${n.imagem ? `<img src="${n.imagem}" style="width:100%;border-radius:8px;margin-bottom:10px;">` : ""}
 
-  fetch("news.json")
-    .then(r => r.json())
-    .then(json => {
-      dados = json;
-      mostrar("futebol");
-    })
-    .catch(() => {
-      document.getElementById("conteudo").innerHTML = "Erro ao carregar notícias.";
-    });
-</script>
+                     <div class="titulo"><strong>${n.titulo}</strong></div>
+                     <div class="resumo">${n.resumo}</div>
+                     <br>
+                     <a href="${n.link}" target="_blank">Ler mais</a>
+                    </div>  `;
+            });
+
+            document.getElementById("conteudo").innerHTML = html || "Sem notícias disponíveis.";
+        }
+
+        fetch("news.json")
+            .then(r => r.json())
+            .then(json => {
+                dados = json;
+                mostrar("futebol");
+            })
+            .catch(() => {
+                document.getElementById("conteudo").innerHTML = "Erro ao carregar notícias.";
+            });
+    </script>
 
 </body>
+
 </html>

@@ -21,6 +21,7 @@ public class MainController {
         atualizar();
     }
 
+
     public void atualizar() {
         try {
             json = service.fetchJson();
@@ -47,4 +48,6 @@ public class MainController {
             listaNoticias.getItems().add(n.getTitulo() + " — " + n.getFonte());
         }
     }
+
+
 }
