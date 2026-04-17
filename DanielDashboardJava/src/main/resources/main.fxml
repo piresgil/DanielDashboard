@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="dashboard.controller.MainController">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox spacing="12" alignment="CENTER" style="-fx-padding: 10;">
+            <Button text="Futebol" onAction="#mostrarFutebol" />
+            <Button text="Hóquei" onAction="#mostrarHoquei" />
+            <Button text="Atualizar" onAction="#atualizar" />
+        </HBox>
+    </top>
+
+    <!-- MAIN CONTENT -->
+    <center>
+        <ListView fx:id="listaNoticias" />
+    </center>
+
+</BorderPane>
