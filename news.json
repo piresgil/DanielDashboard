@@ -1,0 +1,26 @@
+{
+  "futebol": [
+    {
+      "titulo": "Benfica vence e mantém liderança da Liga",
+      "link": "https://www.abola.pt",
+      "fonte": "A Bola"
+    },
+    {
+      "titulo": "Sporting prepara clássico decisivo",
+      "link": "https://www.record.pt",
+      "fonte": "Record"
+    }
+  ],
+  "hoquei": [
+    {
+      "titulo": "FC Porto vence dérbi no Dragão Arena",
+      "link": "https://www.zerozero.pt",
+      "fonte": "ZeroZero"
+    },
+    {
+      "titulo": "Oliveirense reforça equipa para playoffs",
+      "link": "https://hoqueipt.com",
+      "fonte": "HóqueiPT"
+    }
+  ]
+}
