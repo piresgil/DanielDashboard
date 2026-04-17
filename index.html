@@ -18,12 +18,10 @@
       padding: 25px 0;
       font-size: 32px;
       font-weight: bold;
-      letter-spacing: 1px;
       background: #111;
       border-bottom: 2px solid #222;
     }
 
-    /* Tabs */
     .tabs {
       display: flex;
       justify-content: center;
@@ -48,7 +46,6 @@
       background: #e60000;
     }
 
-    /* Cards */
     .container {
       max-width: 900px;
       margin: auto;
@@ -84,6 +81,28 @@
     a:hover {
       text-decoration: underline;
     }
+
+    .filtro {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: #333;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-block;
+      margin: 5px;
+    }
+
+    .btn:hover {
+      background: #444;
+    }
+
+    .btn.active {
+      background: #e60000;
+    }
   </style>
 </head>
 
@@ -92,29 +111,52 @@
 <header>DanielDashboard</header>
 
 <div class="tabs">
-  <div class="tab active" onclick="mostrar('benfica')">Benfica</div>
+  <div class="tab active" onclick="mostrar('futebol')">Futebol</div>
   <div class="tab" onclick="mostrar('hoquei')">Hóquei</div>
   <div class="tab" onclick="mostrar('tecnologia')">Tecnologia</div>
+</div>
+
+<div class="filtro" id="filtroBenfica" style="display:none;">
+  <div class="btn active" onclick="filtrarBenfica(false)">Tudo</div>
+  <div class="btn" onclick="filtrarBenfica(true)">Só Benfica</div>
 </div>
 
 <div class="container" id="conteudo">A carregar notícias...</div>
 
 <script>
   let dados = {};
+  let filtroBenficaAtivo = false;
+
+  const palavrasBenfica = ["benfica", "slb", "águia", "encarnad"];
+
+  function filtrarBenfica(ativo) {
+    filtroBenficaAtivo = ativo;
+    document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
+    document.querySelector(`.btn[onclick="filtrarBenfica(${ativo})"]`).classList.add("active");
+    mostrar("futebol");
+  }
 
   function mostrar(secao) {
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
     document.querySelector(`.tab[onclick="mostrar('${secao}')"]`).classList.add("active");
 
-    const lista = dados[secao] || [];
+    document.getElementById("filtroBenfica").style.display = secao === "futebol" ? "block" : "none";
+
+    let lista = dados[secao] || [];
+
+    if (secao === "futebol" && filtroBenficaAtivo) {
+      lista = lista.filter(n =>
+        palavrasBenfica.some(p => n.titulo.toLowerCase().includes(p))
+      );
+    }
+
     let html = "";
 
     lista.forEach(n => {
       html += `
         <div class="card">
           <div class="fonte">${n.fonte}</div>
-          <div class="titulo"><strong>${n.titulo}</strong></div>
-          <div class="resumo">${n.resumo || ""}</div>
+          <div><strong>${n.titulo}</strong></div>
           <br>
           <a href="${n.link}" target="_blank">Ler notícia</a>
         </div>
@@ -128,7 +170,7 @@
     .then(r => r.json())
     .then(json => {
       dados = json;
-      mostrar("benfica");
+      mostrar("futebol");
     })
     .catch(() => {
       document.getElementById("conteudo").innerHTML = "Erro ao carregar notícias.";

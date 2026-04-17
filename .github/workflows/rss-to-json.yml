@@ -2,7 +2,7 @@ name: Atualizar news.json automaticamente
 
 on:
   schedule:
-    - cron: "0 */6 * * *"   # Atualiza de 6 em 6 horas
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -15,36 +15,15 @@ jobs:
 
       - name: Instalar dependências Python
         run: |
-          pip install feedparser googletrans==4.0.0-rc1 beautifulsoup4 requests
+          pip install feedparser requests
 
       - name: Gerar news.json
         run: |
           python3 << 'EOF'
-          import feedparser, json, requests
-          from bs4 import BeautifulSoup
-          from googletrans import Translator
+          import feedparser, json
 
-          translator = Translator()
-
-          # -----------------------------
-          # FILTROS DO BENFICA
-          # -----------------------------
-          palavras_benfica = ["Benfica", "SLB", "Águias", "Encarnados"]
-
-          def resumo(texto):
-              return texto[:180] + "..."
-
-          def traduzir(txt):
-              try:
-                  return translator.translate(txt, dest="pt").text
-              except:
-                  return txt
-
-          # -----------------------------
-          # FONTES
-          # -----------------------------
           fontes = {
-              "benfica": [
+              "futebol": [
                   ("https://www.abola.pt/rss", "A Bola"),
                   ("https://www.record.pt/rss", "Record"),
                   ("https://www.ojogo.pt/rss", "O Jogo"),
@@ -64,55 +43,18 @@ jobs:
               ]
           }
 
-          resultado = {"benfica": [], "hoquei": [], "tecnologia": []}
+          resultado = {"futebol": [], "hoquei": [], "tecnologia": []}
 
-          # -----------------------------
-          # RSS NORMAL
-          # -----------------------------
           for categoria, feeds in fontes.items():
               for url, fonte in feeds:
                   feed = feedparser.parse(url)
                   for item in feed.entries[:10]:
-                      titulo = item.title
-                      link = item.link
-
-                      # FILTRO BENFICA
-                      if categoria == "benfica":
-                          if not any(p.lower() in titulo.lower() for p in palavras_benfica):
-                              continue
-
-                      noticia = {
-                          "titulo": traduzir(titulo),
-                          "resumo": resumo(traduzir(item.get("summary", titulo))),
-                          "link": link,
+                      resultado[categoria].append({
+                          "titulo": item.title,
+                          "link": item.link,
                           "fonte": fonte
-                      }
-                      resultado[categoria].append(noticia)
+                      })
 
-          # -----------------------------
-          # SCRAPING DO SITE OFICIAL DO BENFICA
-          # -----------------------------
-          try:
-              html = requests.get("https://www.slbenfica.pt/pt-pt/agora/noticias").text
-              soup = BeautifulSoup(html, "html.parser")
-              artigos = soup.select("a.card-news")
-
-              for a in artigos[:10]:
-                  titulo = a.get_text(strip=True)
-                  link = "https://www.slbenfica.pt" + a["href"]
-
-                  resultado["benfica"].append({
-                      "titulo": titulo,
-                      "resumo": "Notícia oficial do Benfica.",
-                      "link": link,
-                      "fonte": "SL Benfica"
-                  })
-          except:
-              pass
-
-          # -----------------------------
-          # GUARDAR JSON
-          # -----------------------------
           with open("news.json", "w", encoding="utf-8") as f:
               json.dump(resultado, f, ensure_ascii=False, indent=2)
 
