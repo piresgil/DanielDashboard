@@ -1,25 +1,55 @@
 {
   "futebol": [
     {
-      "titulo": "Benfica vence e mantém liderança da Liga",
-      "link": "https://www.abola.pt",
-      "fonte": "A Bola"
+      "titulo": "<![CDATA[ Lens opera reviravolta e não desiste do título francês ]]>",
+      "link": "https://www.record.pt/internacional/paises/franca/detalhe/lens-opera-reviravolta-e-nao-desiste-do-titulo-frances",
+      "fonte": "Record"
     },
     {
-      "titulo": "Sporting prepara clássico decisivo",
-      "link": "https://www.record.pt",
+      "titulo": "<![CDATA[ Rio Ave-AVS, 1-2 (2.ª parte) ]]>",
+      "link": "https://www.record.pt/futebol/futebol-nacional/liga-betclic/detalhe/20260417-183947-rio-ave-avs-em-direto",
+      "fonte": "Record"
+    },
+    {
+      "titulo": "<![CDATA[ Mistério em Inglaterra: medalhas dos títulos conquistados pelo Man. City em 2022/23 colocadas em leilão ]]>",
+      "link": "https://www.record.pt/internacional/paises/inglaterra/man--city/detalhe/misterio-em-inglaterra-medalhas-dos-titulos-conquistados-pelo-man-city-em-2022-23-colocadas-em-leilao",
+      "fonte": "Record"
+    },
+    {
+      "titulo": "<![CDATA[ Sorriso alerta para o Sp. Braga: «Vêm com confiança depois de ganharem ao Betis» ]]>",
+      "link": "https://www.record.pt/futebol/futebol-nacional/liga-betclic/famalicao/detalhe/sorriso-alerta-para-o-sp-braga-vem-com-confianca-depois-de-ganharem-ao-betis",
+      "fonte": "Record"
+    },
+    {
+      "titulo": "<![CDATA[ Vítor Pinto: «Benfica tem o melhor treinador português de sempre e Rui Costa parece estar à espera do dérbi»  ]]>",
+      "link": "https://www.record.pt/multimedia/record-na-hora/detalhe/vitor-pinto-benfica-tem-o-melhor-treinador-portugues-de-sempre-e-rui-costa-parece-estar-a-espera-do-derbi",
       "fonte": "Record"
     }
   ],
   "hoquei": [
     {
-      "titulo": "FC Porto vence dérbi no Dragão Arena",
-      "link": "https://www.zerozero.pt",
-      "fonte": "ZeroZero"
+      "titulo": "«Esta é a melhor selecção francesa em que já estive»",
+      "link": "https://hoqueipt.com/artigo/8905-esta-e-a-melhor-seleccao-francesa-em-que-ja-e",
+      "fonte": "HóqueiPT"
     },
     {
-      "titulo": "Oliveirense reforça equipa para playoffs",
-      "link": "https://hoqueipt.com",
+      "titulo": "«Fomos uma equipa sólida, consistente, a jogar Hóquei»",
+      "link": "https://hoqueipt.com/artigo/8906-fomos-uma-equipa-solida-consistente-a-jogar-h",
+      "fonte": "HóqueiPT"
+    },
+    {
+      "titulo": "«Em relação ao Hóquei profissional, muito dificilmente vou continuar»",
+      "link": "https://hoqueipt.com/artigo/8877-em-relacao-ao-hoquei-profissional-muito-dific",
+      "fonte": "HóqueiPT"
+    },
+    {
+      "titulo": "«Os passos que estamos a dar são em frente»",
+      "link": "https://hoqueipt.com/artigo/8872-os-passos-que-estamos-a-dar-sao-em-frente",
+      "fonte": "HóqueiPT"
+    },
+    {
+      "titulo": "«Fizemos um grande torneio, merecíamos um golo e o prolongamento»",
+      "link": "https://hoqueipt.com/artigo/8903-fizemos-um-grande-torneio-mereciamos-um-golo-",
       "fonte": "HóqueiPT"
     }
   ]
